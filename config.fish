@@ -2,19 +2,18 @@ starship init fish | source
 
 set fish_greeting
 
-load_private_env
-
+# Envrionment variables
 set -U fish_user_paths $PYENV_ROOT/bin
 set -gx PYENV_ROOT $HOME/.pyenv
 set -gx PIPX_DEFAULT_PYTHON $PYENV_ROOT/versions/3.10.5/bin/python
-set -gx PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
+set -gx PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig /usr/share/pkgconfig $PKG_CONFIG_PATH
 set -gx BAT_THEME "Nord"
 set -gx PYTHON3_HOST_PROG "/usr/bin/python3"
 set -gx XDG_CONFIG_HOME "$HOME/.config"
 set -gx GIT_REPOS_DIR "$HOME/repos"
 set -gx FISH_CONFIG "$GIT_REPOS_DIR/config-fish/config.fish"
 set -gx NVIM_CONFIG "$GIT_REPOS_DIR/config-nvim"
-set -gx GOROOT "$HOME/.go"
+set -gx GOROOT "/usr/local/go"
 set -gx GOPATH "$HOME/go"
 set -gx LOCAL_BIN "$HOME/.local/bin"
 set -gx HOMEBREW_PREFIX "/home/linuxbrew/.linuxbrew"
@@ -29,6 +28,10 @@ set -gx FZF_DEFAULT_OPTS "
   --color pointer:#BF616A,info:#4C566A,spinner:#4C566A,header:#4C566A,prompt:#81A1C1,marker:#EBCB8B
 "
 
+# Secret Environment variables
+source $HOME/.config/fish/env.fish
+
+# Changes to PATH
 set -gx PATH "$HOMEBREW_PREFIX/bin" "$HOMEBREW_PREFIX/sbin" $PATH
 set -gx PATH "/usr/local/go/bin" "$GOPATH/bin" "$GOROOT/bin" $PATH
 set -gx PATH "$HOME/.pyenv/bin" $PATH
@@ -37,22 +40,22 @@ set -gx PATH "$HOME/.cargo/bin" $PATH
 set -gx PATH "$HOME/.surrealdb" $PATH
 set -gx PATH "$HOME/.local/share/flatpak/exports/bin" $PATH
 set -gx PATH "$LOCAL_BIN" $PATH
+set -gx PATH $PYENV_ROOT/bin $PATH
+set -gx PATH "$HOME/.config/rofi/scripts" $PATH
 
+# Aliases
 if type -q exa
   alias ll "exa -l -g --icons"
   alias lla "ll -a"
 end
 alias gs "git status -s"
-alias tf "terraform"
-alias psa "pactl set-default-sink $AIRPODS_SINK_ID"
-alias psl "pactl set-default-sink $LAPTOP_SINK_ID"
-alias ra-update "curl -sL https://github.com/rust-lang/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz | gunzip -c - > ~/.local/bin/rust-analyzer && rust-analyzer --version"
+alias ra-update "curl -sL https://github.com/rust-lang/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz \
+  | gunzip -c - > $LOCAL_BIN/rust-analyzer \
+  && chmod u+x $LOCAL_BIN/rust-analyzer \
+  && rust-analyzer --version"
 alias nr "nvim src/main.rs"
 alias n "nvim ."
 
 . (pyenv init - | psub)
 status --is-interactive; and pyenv virtualenv-init - | source
-
-lua $GIT_REPOS_DIR/lua-z/z.lua --init fish | source
-
 direnv hook fish | source
