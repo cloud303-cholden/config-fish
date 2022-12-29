@@ -55,6 +55,7 @@ alias ra-update "curl -sL https://github.com/rust-lang/rust-analyzer/releases/la
   && rust-analyzer --version"
 alias nr "nvim src/main.rs"
 alias n "nvim ."
+alias repo "git remote -v | awk 'NR==1 {print $2}' | cut -d ':' -f 2 | cut -d '.' -f 1"
 
 . (pyenv init - | psub)
 status --is-interactive; and pyenv virtualenv-init - | source
